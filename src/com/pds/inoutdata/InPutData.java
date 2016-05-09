@@ -5,7 +5,7 @@
  */
 package com.pds.inoutdata;
 
-import ProtocoleNetwork.Receive;
+import com.pds.networkprotocol.Receive;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,9 +14,8 @@ import java.net.Socket;
 import javax.xml.parsers.*;
 //import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import static ProtocoleNetwork.Receive.*;
-import ProtocoleNetwork.*;
-import static ProtocoleNetwork.Send.*;
+import static com.pds.networkprotocol.Receive.*;
+import static com.pds.networkprotocol.Send.*;
 import java.io.File;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;

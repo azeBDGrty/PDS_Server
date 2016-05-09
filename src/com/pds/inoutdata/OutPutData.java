@@ -5,9 +5,9 @@
  */
 package com.pds.inoutdata;
 
-import static ProtocoleNetwork.Receive.askSimulationPretsClient;
-import ProtocoleNetwork.Send;
-import static ProtocoleNetwork.Send.*;
+import static com.pds.networkprotocol.Receive.askSimulationPretsClient;
+import com.pds.networkprotocol.Send;
+import static com.pds.networkprotocol.Send.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
