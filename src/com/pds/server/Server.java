@@ -5,7 +5,7 @@
  */
 package com.pds.server;
 
-import com.pds.clientmanager.ClientHandler;
+import com.pds.customermanager.ClientHandler;
 import com.pds.log.Logger;
 import java.io.IOException;
 import java.net.InetAddress;
