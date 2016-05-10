@@ -5,6 +5,7 @@
  */
 package Database;
 
+import com.pds.database.Database;
 import java.sql.Connection;
 import java.sql.Statement;
 import org.junit.After;
