@@ -103,6 +103,12 @@ public class InPutData {
                 this.lastCommand = askAllPays;
                 break;
                 
+                
+            case "askSimulationClient": 
+                this.lastCommand = askSimulationClient;
+                readElement();
+                break;
+                
             case "askSimulationPretsClient": 
                 readElement(); // on dot recuperer le id du client concerné
                 this.lastCommand = askSimulationPretsClient;

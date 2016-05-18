@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -68,8 +69,12 @@ public class ManagerConseiller extends ManagerDB {
                         this.out.sendALlPays(getAllPays());
                         break;
                     case askSimulationPretsClient:
-
                         break;
+                        
+                    case askSimulationClient : 
+                        this.out.sendAllSimPretClient(getAllSimulations());
+                        break;
+                        
                     default:
                         this.out.sendNeedRight(null);
                         break;
@@ -211,6 +216,26 @@ public class ManagerConseiller extends ManagerDB {
             root.addContent(eRegion);
         }
         return root;
+    }
+    
+    private Element getAllSimulations(Element e) throws SQLException{
+        //int idClient = Integer.parseInt(e.getRootElement().getChildText("id_client"));
+        String query = ("SELECT * FROM simul_pret,calcpret,taux_directeur WHERE simul_pret.id_calcPret=calcPret.id_calcPret "
+                + "AND calcpret.id_tauxDirecteur=taux_directeur.id_tauxDirecteur");
+        PreparedStatement st = connexion.prepareStatement(query);
+        ResultSet rs = st.executeQuery();
+       
+        Element root = new Element("rootElement");
+        
+        while (rs.next()) {
+            Element simulation = new Element("simulationRealisee");
+            ResultSetMetaData columns = rs.getMetaData();
+            for (int i = 1; i <= columns.getColumnCount(); i++) {
+                createChildElement(rs, columns.getColumnName(i), columns.getColumnName(i), simulation);
+            }
+            root.addContent(simulation);
+        }
+        return root;    //retourne un element xml avec l'ensemble des balise contenant les données de la requete
     }
 
     private Element getAllDepartement() throws SQLException {
