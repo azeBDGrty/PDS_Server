@@ -218,7 +218,7 @@ public class ManagerConseiller extends ManagerDB {
         return root;
     }
     
-    private Element getAllSimulations(Element e) throws SQLException{
+    private Element getAllSimulations() throws SQLException{
         //int idClient = Integer.parseInt(e.getRootElement().getChildText("id_client"));
         String query = ("SELECT * FROM simul_pret,calcpret,taux_directeur WHERE simul_pret.id_calcPret=calcPret.id_calcPret "
                 + "AND calcpret.id_tauxDirecteur=taux_directeur.id_tauxDirecteur");

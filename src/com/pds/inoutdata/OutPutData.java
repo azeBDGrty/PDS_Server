@@ -68,7 +68,9 @@ public class OutPutData {
         sendMessage(undefinedRequest.toString(), null);
     }
     
-    
+    public void sendAllSimPretClient(Element information){
+        sendMessage(sendSimulationPretsClient.toString(), information);
+    }
     
     
     public void sendALlRegion(Element information){

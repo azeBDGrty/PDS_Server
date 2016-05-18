@@ -13,7 +13,7 @@ public enum Send {
     
     connectionRefused(""),
     connectionAutorised(""),
-    connectionDone("La connection est déjà rétabli"),
+    connectionDone("La connection est déjà rétablie"),
     undefinedRequest (""),
     
     sendInformationClient ("Envoyer les informations qui concerne le client(qui est connecté)"),
@@ -26,7 +26,7 @@ public enum Send {
     sendAllPays ("La liste des pays"),
     
     
-    sendSimulationPretsCdlient("La liste des simulations de prets.");
+    sendSimulationPretsClient("La liste des simulations de prets.");
             
     private String abv;
 
