@@ -110,8 +110,9 @@ public class InPutData {
                 break;
                 
             case "askSimulationPretsClient": 
-                readElement(); // on dot recuperer le id du client concerné
                 this.lastCommand = askSimulationPretsClient;
+                readElement(); // on dot recuperer le id du client concerné
+                
                 break;
                 
             default :

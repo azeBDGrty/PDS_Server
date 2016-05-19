@@ -69,6 +69,8 @@ public class ManagerConseiller extends ManagerDB {
                         this.out.sendALlPays(getAllPays());
                         break;
                     case askSimulationPretsClient:
+                        this.out.sendAllSimPretClient(getAllSimulations());
+                        
                         break;
                         
                     case askSimulationClient : 

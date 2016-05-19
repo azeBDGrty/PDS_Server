@@ -24,8 +24,7 @@ public enum Send {
     sendAllDepartement ("La liste des departements"),
     sendAllRegion ("La liste des regions"),
     sendAllPays ("La liste des pays"),
-    
-    
+
     sendSimulationPretsClient("La liste des simulations de prets.");
             
     private String abv;
