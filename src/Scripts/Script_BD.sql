@@ -938,6 +938,7 @@ WHERE
        AND isClient = true;
 
 
+
    SELECT * FROM Client c, Info_Personnelle i, Account a where i.id_info_perso = c.id_info_perso and c.id_account = a.id_account; 
 
    SELECT * FROM Simul_Pret sp, calcPret cp, Taux_Directeur td  WHERE cp.id_calcPret = sp.id_calcPret and cp.id_tauxDirecteur = td.id_tauxDirecteur AND sp.id_client=1
