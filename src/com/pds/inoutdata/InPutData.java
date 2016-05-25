@@ -71,6 +71,11 @@ public class InPutData {
                 this.lastCommand = askAuthentification;
                 break;
                 
+            case "askTauxInteret" : 
+                readElement();
+                this.lastCommand = askTauxInteret;
+                break;
+                
             case "askAllClient": 
                 this.lastCommand = askAllClient;
                 break;

@@ -38,6 +38,10 @@ public class ManagerConseiller extends ManagerDB {
 
             try {
                 switch (this.in.getCommand()) {
+                    
+                    case askTauxInteret: 
+                        this.out.sendTauxInteret(getTauxInteretConcerned());
+                        break;
 
                     case askAuthentification:
                         this.out.sendConnectionDone(null);
@@ -276,6 +280,31 @@ public class ManagerConseiller extends ManagerDB {
         }
         return root;
     }
+    
+     private Element getTauxInteretConcerned() throws SQLException {
+        Element eRoot = this.in.getLastDocument().getRootElement();
+        int age = Integer.parseInt(eRoot.getChildText("age"));
+        double revenu = Double.parseDouble(eRoot.getChildText("revenu"));
+        String typeContrat = eRoot.getChildText("typeContrat");
+        boolean isClient = (eRoot.getChildText("isClient").equalsIgnoreCase("1")) ? true : false;
+        String typeEmprunt = eRoot.getChildText("typeEmprunt");
+        
+        String query = "SELECT *  FROM matriceTauxFixe  WHERE  ('"+age+"' BETWEEN ageMin and ageMax)  AND ('"+revenu+"' BETWEEN revenuMin AND revenuMax)   AND (typeContrat = '"+typeContrat+"')  AND idTypePret in (SELECT id_type_pret FROM type_pret where libelle = '"+typeEmprunt+"')     AND isClient = "+isClient+";";
+        ResultSet rs = connexion.createStatement().executeQuery(query);
+
+        Element root = new Element("rootElement");
+        
+        
+        while (rs.next()) {
+            ResultSetMetaData columns = rs.getMetaData();
+            for (int i = 1; i <= columns.getColumnCount(); i++) 
+                createChildElement(rs, columns.getColumnName(i), columns.getColumnName(i), root);
+            System.out.println(rs.getString("ageMin")+".....");
+        }
+        System.out.println(new XMLOutputter().outputString(root));
+        return root;
+    }
+
 
     private Element getLoanNumbers(Element element) throws SQLException {
           
