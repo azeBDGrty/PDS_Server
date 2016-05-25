@@ -31,6 +31,7 @@ public enum Receive {
     askAllPays ("Demande la liste des pays"),
     askAllRegion ("Demande la liste des regions "),
     askSimulationPretsClient ("Demande la liste des simulations des prets"),
+    askTauxInteret("le client(c/s) demande le taux d'interet"),
     askSimulationClient("demande la liste des sim de pret d'un client def"),
     askIndicatorInfo ("");
     
