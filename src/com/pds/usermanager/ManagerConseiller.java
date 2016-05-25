@@ -56,7 +56,12 @@ public class ManagerConseiller extends ManagerDB {
                         this.deleteClient(this.in.getLastDocument().getRootElement());
                         this.out.sendAllClient(listerAllClient());
                         break;
-
+                    
+                     case askIndicatorInfo : 
+                        System.out.println("test4 -----");
+                        this.out.sendLoanNumbers(getLoanNumbers(this.in.getLastDocument().getRootElement()));
+                        break;
+                    
                     case askAllRegion:
                         this.out.sendALlRegion(getAllRegions());
                         break;
@@ -272,4 +277,40 @@ public class ManagerConseiller extends ManagerDB {
         return root;
     }
 
+    private Element getLoanNumbers(Element element) throws SQLException {
+          
+      
+          
+        String query = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = ? " +
+"AND Age BETWEEN ? AND ? "+
+"AND libelle = ? "+
+"AND typeTaux = ? "+
+"AND id_agence = ? ";
+        
+       
+        PreparedStatement st = connexion.prepareStatement(query);
+        System.out.println(Integer.parseInt(element.getChild("annee").getValue()));
+        st.setInt(1, Integer.parseInt(element.getChild("annee").getValue()));
+        st.setInt(2, Integer.parseInt(element.getChild("ageDebut").getValue()));
+        st.setInt(3, Integer.parseInt(element.getChild("ageFin").getValue()));
+        st.setString(4, element.getChild("libelle").getValue());
+        st.setString(5, element.getChild("typeTaux").getValue());
+        st.setInt(6, Integer.parseInt(element.getChild("Id_agence").getValue()));
+        
+        ResultSet rs = st.executeQuery();
+        Element root = new Element("rootElement");
+        while (rs.next()) {
+            Element eRegion = new Element("loanNumbers");
+            ResultSetMetaData columns = rs.getMetaData();
+            for (int i = 1; i <= columns.getColumnCount(); i++) {
+                System.out.println(rs.getInt(1));
+               createChildElement(rs, columns.getColumnName(i), columns.getColumnName(i), eRegion);
+            }
+            root.addContent(eRegion);
+        }
+        return root;
+    }
+    
 }
