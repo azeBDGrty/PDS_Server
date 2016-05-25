@@ -31,7 +31,8 @@ public enum Receive {
     askAllPays ("Demande la liste des pays"),
     askAllRegion ("Demande la liste des regions "),
     askSimulationPretsClient ("Demande la liste des simulations des prets"),
-    askSimulationClient("demande la liste des sim de pret d'un client def");
+    askSimulationClient("demande la liste des sim de pret d'un client def"),
+    askIndicatorInfo ("");
     
     private String signification;
 

@@ -87,7 +87,10 @@ public class InPutData {
                 this.lastCommand = askInformationClient;
                 break;
                 
-                
+            case "askIndicatorInfo": 
+                this.lastCommand = askIndicatorInfo;
+                readElement();
+                break;    
                 
                 
                 

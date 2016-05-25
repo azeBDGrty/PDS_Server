@@ -85,5 +85,7 @@ public class OutPutData {
         sendMessage(sendAllPays.toString(), information);
     }
     
-    
+     public void sendLoanNumbers(Element information) {
+        sendMessage(sendLoanNumbers.toString(),information);
+    }
 }
