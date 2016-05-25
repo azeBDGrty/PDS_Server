@@ -1,0 +1,4 @@
+/build/
+/nbproject/
+/src/com/pds/database/Database.java
+/test/Database/DatabaseTest.java
