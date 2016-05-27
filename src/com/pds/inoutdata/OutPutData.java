@@ -92,4 +92,8 @@ public class OutPutData {
      public void sendLoanNumbers(Element information) {
         sendMessage(sendLoanNumbers.toString(),information);
     }
+     
+     public void sendAvgAge(Element information) {
+        sendMessage(sendAvgAge.toString(),information);
+    }
 }

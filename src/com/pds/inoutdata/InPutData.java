@@ -96,7 +96,11 @@ public class InPutData {
                 this.lastCommand = askIndicatorInfo;
                 readElement();
                 break;    
-                
+            
+                case "askAvgAge": 
+                this.lastCommand = askAvgAge;
+                readElement();
+                break; 
                 
                 
             case "askAllRegion":
