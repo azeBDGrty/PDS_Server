@@ -62,9 +62,13 @@ public class ManagerConseiller extends ManagerDB {
                         break;
                     
                      case askIndicatorInfo : 
-                        System.out.println("test4 -----");
                         this.out.sendLoanNumbers(getLoanNumbers(this.in.getLastDocument().getRootElement()));
                         break;
+                    
+                    case askAvgAge : 
+                        this.out.sendAvgAge(getAgebyLoan(this.in.getLastDocument().getRootElement()));
+                        break;
+                         
                     
                     case askAllRegion:
                         this.out.sendALlRegion(getAllRegions());
@@ -341,5 +345,93 @@ public class ManagerConseiller extends ManagerDB {
         }
         return root;
     }
+ 
+    private Element getAgebyLoan(Element element) throws SQLException {
+          
+  String checkImmo = element.getChild("TypePretImmo").getValue();
+  String checkConso = element.getChild("TypePretConso").getValue();
+ int tabtranche[] = {18,25,26,40,41,65,66,200};         
+
+String query = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = 2016 " +
+"AND Age BETWEEN ? AND ? "+
+"AND libelle = ? "+
+"AND id_agence = 1 ";
+        
+String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = 2016 " +
+"AND Age BETWEEN ? AND ? "+
+"AND id_agence = 1 ";
+       
+        
+        if(checkImmo.equals("1") && checkConso.equals("1")){
+            PreparedStatement st = connexion.prepareStatement(query2);
+            Element root = new Element("rootElement");
+            Element resultat = new Element("resultat");
+            for(int j=0;j<tabtranche.length;j=j+2){
+                st.setInt(1,tabtranche[j]);
+                st.setInt(2,tabtranche[j+1]);
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int i = 1; i <= columns.getColumnCount(); i++) {
+                    createChildElement(rs,columns.getColumnName(i), "tranche"+j, resultat);
+                    }
+          
+    }
+            }
+                  root.addContent(resultat);
+        return root;
+        }
+        
+       else   if(checkImmo.equals("1") && checkConso.equals("0")){
+                       PreparedStatement st = connexion.prepareStatement(query);
+            Element root = new Element("rootElement");
+            Element resultat = new Element("resultat");
+            for(int j=0;j<tabtranche.length;j=j+2){
+                st.setInt(1,tabtranche[j]);
+                st.setInt(2,tabtranche[j+1]);
+                st.setString(3, "_Credit_IMMO_");
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int i = 1; i <= columns.getColumnCount(); i++) {
+                    createChildElement(rs,columns.getColumnName(i), "tranche"+j, resultat);
+                    }
+          
+    }
+            }
+                  root.addContent(resultat);
+        return root;
+        }
+        
+       else   if(checkImmo.equals("0") && checkConso.equals("1")){
+           System.out.println("check conso");
+           PreparedStatement st = connexion.prepareStatement(query);
+            Element root = new Element("rootElement");
+            Element resultat = new Element("resultat");
+            for(int j=0;j<tabtranche.length;j=j+2){
+                st.setInt(1,tabtranche[j]);
+                st.setInt(2,tabtranche[j+1]);
+                st.setString(3,"_CREDIT_CONSO_");
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int i = 1; i <= columns.getColumnCount(); i++) {
+                    createChildElement(rs,columns.getColumnName(i), "tranche"+j, resultat);
+                    }
+          
+    }
+            }
+                  root.addContent(resultat);
+        return root;
+        }
+        return null;
     
+    } 
 }
