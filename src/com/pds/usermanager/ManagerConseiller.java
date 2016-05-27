@@ -293,12 +293,10 @@ public class ManagerConseiller extends ManagerDB {
         boolean isClient = (eRoot.getChildText("isClient").equalsIgnoreCase("1")) ? true : false;
         String typeEmprunt = eRoot.getChildText("typeEmprunt");
         
-        String query = "SELECT *  FROM matriceTauxFixe  WHERE   ageMin < '"+age+"' and ageMax > '"+age+"'  AND  revenuMin < '"+revenu+"' revenuMax > '"+revenu+"'   AND (typeContrat = '"+typeContrat+"')  AND idTypePret in (SELECT id_type_pret FROM type_pret where libelle = '"+typeEmprunt+"')     AND isClient = "+isClient+";";
-         System.out.println(query);
+String query = "SELECT *  FROM matriceTauxFixe  WHERE ageMin < '"+age+"' AND ageMax > '"+age+"'  AND  revenuMin < '"+revenu+"' AND revenuMax > '"+revenu+"'   AND (typeContrat = '"+typeContrat+"')  AND idTypePret in (SELECT id_type_pret FROM type_pret where libelle = '"+typeEmprunt+"')     AND isClient = "+isClient+";";         System.out.println(query);
         ResultSet rs = connexion.createStatement().executeQuery(query);
 
         Element root = new Element("rootElement");
-        
         
         while (rs.next()) {
             ResultSetMetaData columns = rs.getMetaData();
