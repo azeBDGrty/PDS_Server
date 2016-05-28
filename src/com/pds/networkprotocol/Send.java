@@ -24,7 +24,10 @@ public enum Send {
     sendAllDepartement ("La liste des departements"),
     sendAllRegion ("La liste des regions"),
     sendAllPays ("La liste des pays"),
-    sendLoanNumbers(""),
+    sendLoanNumber(""),
+    sendSimNumber(""),
+    sendAvgAmount(""),
+    sendLoanTime(""),
     sendAvgAge(""),
     sendTauxInteret ("La valeur du taux d'emprunt"),
     sendSimulationPretsClient("La liste des simulations de prets.");

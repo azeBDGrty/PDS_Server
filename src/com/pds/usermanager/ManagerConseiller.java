@@ -60,16 +60,27 @@ public class ManagerConseiller extends ManagerDB {
                         this.deleteClient(this.in.getLastDocument().getRootElement());
                         this.out.sendAllClient(listerAllClient());
                         break;
-                    
-                     case askIndicatorInfo : 
-                        this.out.sendLoanNumbers(getLoanNumbers(this.in.getLastDocument().getRootElement()));
-                        break;
-                    
+                                        
                     case askAvgAge : 
                         this.out.sendAvgAge(getAgebyLoan(this.in.getLastDocument().getRootElement()));
                         break;
+                        
+                     case askLoanNumber : 
+                        this.out.sendLoanNumber(getLoanNumbers(this.in.getLastDocument().getRootElement()));
+                        break;
                          
+                      case askSimNumber: 
+                        this.out.sendSimNumber(getSimNumbers(this.in.getLastDocument().getRootElement()));
+                        break;   
                     
+                    case askAvgAmount: 
+                        this.out.sendAvgAmount(getAvgAmount(this.in.getLastDocument().getRootElement()));
+                        break;  
+                        
+                    case askLoanTime: 
+                        this.out.sendLoanTime(getLoanTime(this.in.getLastDocument().getRootElement()));
+                        break;      
+                          
                     case askAllRegion:
                         this.out.sendALlRegion(getAllRegions());
                         break;
@@ -309,41 +320,152 @@ public class ManagerConseiller extends ManagerDB {
         return root;
     }
 
-
-    private Element getLoanNumbers(Element element) throws SQLException {
-          
+     
+      private Element getLoanNumbers(Element element) throws SQLException {
+      int ageDebut = 0,ageFin = 0;
+      String typeTaux = null;
+      int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
+       
       
+     if(element.getChild("TypePretImmo").getValue().equals("1") && !element.getChild("TypePretConso").getValue().equals("1") )
+          typeTaux = "_Credit_IMMO_";
+       else if(element.getChild("TypePretConso").getValue().equals("1") && !element.getChild("TypePretImmo").getValue().equals("1"))
+           typeTaux = "_CREDIT_CONSO_";
+      
+      if(nbtranche == 0)
+      {   ageDebut=18;ageFin=25; }
+          else if(nbtranche == 1)    
+          {  ageDebut=26;ageFin=40; }
+          else if(nbtranche == 2)
+          {  ageDebut=41;ageFin=65; }
+          else if(nbtranche == 3)
+          { ageDebut=66;ageFin=200; }
           
         String query = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
 "WHERE "+
-"YEAR(dateDebut) = ? " +
+"YEAR(dateDebut) = 2016 " +
 "AND Age BETWEEN ? AND ? "+
 "AND libelle = ? "+
-"AND typeTaux = ? "+
-"AND id_agence = ? ";
+"AND id_agence = 1 ";
         
-       
-        PreparedStatement st = connexion.prepareStatement(query);
-        System.out.println(Integer.parseInt(element.getChild("annee").getValue()));
-        st.setInt(1, Integer.parseInt(element.getChild("annee").getValue()));
-        st.setInt(2, Integer.parseInt(element.getChild("ageDebut").getValue()));
-        st.setInt(3, Integer.parseInt(element.getChild("ageFin").getValue()));
-        st.setString(4, element.getChild("libelle").getValue());
-        st.setString(5, element.getChild("typeTaux").getValue());
-        st.setInt(6, Integer.parseInt(element.getChild("Id_agence").getValue()));
+    String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = 2016 " +
+"AND Age BETWEEN ? AND ? "+
+"AND id_agence = 1 ";     
+    
+    
+PreparedStatement st;
+
+ if(typeTaux != null){
+     st = connexion.prepareStatement(query);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+        st.setString(3, typeTaux); }
+ else {
+        st = connexion.prepareStatement(query2);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+ }
+ 
         
-        ResultSet rs = st.executeQuery();
-        Element root = new Element("rootElement");
-        while (rs.next()) {
-            Element eRegion = new Element("loanNumbers");
-            ResultSetMetaData columns = rs.getMetaData();
-            for (int i = 1; i <= columns.getColumnCount(); i++) {
-                System.out.println(rs.getInt(1));
-               createChildElement(rs, columns.getColumnName(i), columns.getColumnName(i), eRegion);
-            }
-            root.addContent(eRegion);
+         Element root = new Element("rootElement");
+         Element eloanNumbers = new Element("loanNumbers");
+          
+            for(int i=1;i<=12;i++){
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int j = 1; j <= columns.getColumnCount(); j++) {
+                    createChildElement(rs,columns.getColumnName(j), "month"+i, eloanNumbers);
+                    }
+
+            
         }
+       
+      
+    }
+        root.addContent(eloanNumbers);
         return root;
+    }
+
+    private Element getSimNumbers(Element element) throws SQLException {
+      
+        
+     int ageDebut = 0,ageFin = 0;
+      String typeTaux = null;
+      int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
+      
+      
+      if(element.getChild("TypePretImmo").getValue().equals("1") && !element.getChild("TypePretConso").getValue().equals("1") )
+          typeTaux = "_Credit_IMMO_";
+       else if(element.getChild("TypePretConso").getValue().equals("1") && !element.getChild("TypePretImmo").getValue().equals("1"))
+           typeTaux = "_CREDIT_CONSO_";
+      
+      if(nbtranche == 0)
+      {   ageDebut=18;ageFin=25; }
+          else if(nbtranche == 1)    
+          {  ageDebut=26;ageFin=40; }
+          else if(nbtranche == 2)
+          {  ageDebut=41;ageFin=65; }
+          else if(nbtranche == 3)
+          { ageDebut=66;ageFin=200; }   
+
+      
+ String query = "SELECT COUNT(*) from simul_pret sp,client c"
++"WHERE "
++"YEAR(dateSimulation) = 2016 "
++"AND id_agence = 1 "
++"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance))"
++"BETWEEN ? AND ? "
++"AND sp.id_type_pret = (SELECT id_type_pret from type_pret where libelle = ?) "
++"AND sp.id_client = c.id_client";
+ 
+ String query2 = "SELECT COUNT(*) from simul_pret sp,client c"
++"WHERE "
++"YEAR(dateSimulation) = 2016 "
++"AND id_agence = 1 "
++"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance))"
++"BETWEEN ? AND ? "
++"AND sp.id_client = c.id_client";
+
+   
+ PreparedStatement st;
+ if(typeTaux != null ){
+     st = connexion.prepareStatement(query);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+        st.setString(3, typeTaux); }
+ else {
+        st = connexion.prepareStatement(query2);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+ }
+
+        
+        
+        
+        Element root = new Element("rootElement");
+         Element esimNumbers = new Element("simNumbers");
+          
+            for(int i=1;i<=12;i++){
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int j = 1; j <= columns.getColumnCount(); j++) {
+                    createChildElement(rs,columns.getColumnName(j), "month"+i, esimNumbers);
+                    }
+
+            
+        }
+       
+      
+    }
+            
+              root.addContent(esimNumbers);
+              return root;
     }
  
     private Element getAgebyLoan(Element element) throws SQLException {
@@ -434,4 +556,162 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
         return null;
     
     } 
+    
+   
+     private Element getAvgAmount(Element element) throws SQLException {
+    
+      
+         
+         String checkImmo = element.getChild("TypePretImmo").getValue();
+  String checkConso = element.getChild("TypePretConso").getValue();
+
+   int ageDebut = 0,ageFin = 0;
+      String typeTaux = null;
+      int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
+       
+      
+     if(checkImmo.equals("1") && !checkConso.equals("1") )
+          typeTaux = "_Credit_IMMO_";
+       else if(checkImmo.equals("1") && !checkConso.equals("1"))
+           typeTaux = "_CREDIT_CONSO_";
+  
+  if(nbtranche == 0)
+      {   ageDebut=18;ageFin=25; }
+          else if(nbtranche == 1)    
+          {  ageDebut=26;ageFin=40; }
+          else if(nbtranche == 2)
+          {  ageDebut=41;ageFin=65; }
+          else if(nbtranche == 3)
+          { ageDebut=66;ageFin=200; } 
+         
+   
+        String query = "SELECT AVG(mt_pret) from vue_indicateur3"+
+"WHERE"+
+"YEAR(dateDebut) = 2016 "+
+"AND Age BETWEEN ? AND ?"+
+"AND libelle = ?"+
+"AND id_agence = 1";
+         
+ String query2 = "SELECT AVG(mt_pret) from vue_indicateur3"+
+"WHERE"+
+"YEAR(dateDebut) = 2016 "+
+"AND Age BETWEEN ? AND ?"+
+"AND id_agence = 1";       
+        
+  PreparedStatement st;
+
+ if(typeTaux != null){
+     st = connexion.prepareStatement(query);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+        st.setString(3, typeTaux); }
+ else {
+        st = connexion.prepareStatement(query2);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+ }      
+ 
+  Element root = new Element("rootElement");
+         Element eavgAmount= new Element("eavgAmount");
+          
+            for(int i=1;i<=12;i++){
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int j = 1; j <= columns.getColumnCount(); j++) {
+                    createChildElement(rs,columns.getColumnName(j), "month"+i, eavgAmount);
+                    }
+
+            
+        }
+       
+      
+    }
+            
+              root.addContent(eavgAmount);
+              return root;
+ 
+        
+     }
+         
+         
+         
+     
+     
+     private Element getLoanTime(Element element) throws SQLException {
+    
+         String checkImmo = element.getChild("TypePretImmo").getValue();
+  String checkConso = element.getChild("TypePretConso").getValue();
+
+   int ageDebut = 0,ageFin = 0;
+      String typeTaux = null;
+      int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
+       
+      
+     if(element.getChild("TypePretImmo").getValue().equals("1") && !element.getChild("TypePretConso").getValue().equals("1") )
+          typeTaux = "_Credit_IMMO_";
+       else if(element.getChild("TypePretConso").getValue().equals("1") && !element.getChild("TypePretImmo").getValue().equals("1"))
+           typeTaux = "_CREDIT_CONSO_";
+  
+  if(nbtranche == 0)
+      {   ageDebut=18;ageFin=25; }
+          else if(nbtranche == 1)    
+          {  ageDebut=26;ageFin=40; }
+          else if(nbtranche == 2)
+          {  ageDebut=41;ageFin=65; }
+          else if(nbtranche == 3)
+          { ageDebut=66;ageFin=200; } 
+         
+   
+        String query = "SELECT AVG(duree) from vue_indicateur3"+
+"WHERE"+
+"YEAR(dateDebut) = 2016 "+
+"AND Age BETWEEN ? AND ?"+
+"AND libelle = ?"+
+"AND id_agence = 1";
+         
+ String query2 = "SELECT AVG(duree) from vue_indicateur3"+
+"WHERE"+
+"YEAR(dateDebut) = 2016 "+
+"AND Age BETWEEN ? AND ?"+
+"AND id_agence = 1";       
+        
+  PreparedStatement st;
+
+ if(typeTaux != null){
+     st = connexion.prepareStatement(query);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+        st.setString(3, typeTaux); }
+ else {
+        st = connexion.prepareStatement(query2);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+ }      
+ 
+  Element root = new Element("rootElement");
+         Element eloanTime = new Element("loanTime");
+          
+            for(int i=1;i<=12;i++){
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+            
+                ResultSetMetaData columns = rs.getMetaData();
+                    for (int j = 1; j <= columns.getColumnCount(); j++) {
+                    createChildElement(rs,columns.getColumnName(j), "month"+i, eloanTime);
+                    }
+
+            
+        }
+       
+      
+    }
+            
+              root.addContent(eloanTime);
+              return root;
+ 
+        
+     }
+     
 }

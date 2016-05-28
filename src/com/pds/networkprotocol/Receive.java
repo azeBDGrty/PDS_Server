@@ -34,7 +34,12 @@ public enum Receive {
     askTauxInteret("le client(c/s) demande le taux d'interet"),
     askSimulationClient("demande la liste des sim de pret d'un client def"),
     askAvgAge(""),
-    askIndicatorInfo ("");
+    askIndicatorInfo(""),
+    askLoanNumber(""),
+    askSimNumber(""),
+    askAvgAmount(""),
+    askLoanTime(""),
+    ;
     
     private String signification;
 

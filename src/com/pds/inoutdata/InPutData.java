@@ -101,7 +101,24 @@ public class InPutData {
                 this.lastCommand = askAvgAge;
                 readElement();
                 break; 
-                
+            
+                case "askLoanNumber": 
+                this.lastCommand = askLoanNumber;
+                readElement();
+                break;       
+                    
+                case "askSimNumber": 
+                this.lastCommand = askSimNumber;
+                readElement();
+                break;  
+            
+            case "askAvgAmount":
+                this.lastCommand = askAvgAmount;
+                break;        
+            
+            case "askLOanTime":
+                this.lastCommand = askLoanTime;
+                break;
                 
             case "askAllRegion":
                 this.lastCommand = askAllRegion;

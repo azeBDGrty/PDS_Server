@@ -89,11 +89,25 @@ public class OutPutData {
         sendMessage(sendTauxInteret.toString(), information);
     }
     
-     public void sendLoanNumbers(Element information) {
-        sendMessage(sendLoanNumbers.toString(),information);
-    }
+    
      
      public void sendAvgAge(Element information) {
         sendMessage(sendAvgAge.toString(),information);
+    }
+
+    public void sendSimNumber(Element information) {
+    sendMessage(sendSimNumber.toString(),information);
+    }
+
+    public void sendLoanNumber(Element information) {
+     sendMessage(sendLoanNumber.toString(),information);
+    }
+    
+    public void sendAvgAmount(Element information) {
+     sendMessage(sendAvgAmount.toString(),information);
+    }
+    
+    public void sendLoanTime(Element information) {
+     sendMessage(sendLoanTime.toString(),information);
     }
 }
