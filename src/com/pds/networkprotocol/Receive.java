@@ -39,7 +39,10 @@ public enum Receive {
     askSimNumber(""),
     askAvgAmount(""),
     askLoanTime(""),
-    ;
+    askCustomerNumber(""),
+    askMoney(""),
+    askAge(""),
+    askInterestEarned("");
     
     private String signification;
 

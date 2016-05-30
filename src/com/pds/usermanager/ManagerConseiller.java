@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -76,11 +77,23 @@ public class ManagerConseiller extends ManagerDB {
                     case askAvgAmount: 
                         this.out.sendAvgAmount(getAvgAmount(this.in.getLastDocument().getRootElement()));
                         break;  
+                    
+                    case askInterestEarned:
+                        this.out.sendInterestEarned(getInterestEarned(this.in.getLastDocument().getRootElement()));
                         
                     case askLoanTime: 
                         this.out.sendLoanTime(getLoanTime(this.in.getLastDocument().getRootElement()));
                         break;      
                           
+                    case askCustomerNumber:
+                        this.out.sendCustomerNumber(getCustomerNumber());
+                    
+                    case askAge:
+                        this.out.sendAge(getAge());
+                        
+                    case askMoney:
+                        this.out.sendMoney(getMoney());
+                    
                     case askAllRegion:
                         this.out.sendALlRegion(getAllRegions());
                         break;
@@ -342,14 +355,14 @@ String query = "SELECT *  FROM matriceTauxFixe  WHERE ageMin < '"+age+"' AND age
           
         String query = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
 "WHERE "+
-"YEAR(dateDebut) = 2016 " +
+"YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? " +
 "AND Age BETWEEN ? AND ? "+
 "AND libelle = ? "+
 "AND id_agence = 1 ";
         
     String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
 "WHERE "+
-"YEAR(dateDebut) = 2016 " +
+"YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? " +
 "AND Age BETWEEN ? AND ? "+
 "AND id_agence = 1 ";     
     
@@ -358,13 +371,13 @@ PreparedStatement st;
 
  if(typeTaux != null){
      st = connexion.prepareStatement(query);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
-        st.setString(3, typeTaux); }
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
+        st.setString(4, typeTaux); }
  else {
         st = connexion.prepareStatement(query2);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
  }
  
         
@@ -372,6 +385,7 @@ PreparedStatement st;
          Element eloanNumbers = new Element("loanNumbers");
           
             for(int i=1;i<=12;i++){
+                st.setInt(1,i);
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
             
@@ -412,20 +426,20 @@ PreparedStatement st;
           { ageDebut=66;ageFin=200; }   
 
       
- String query = "SELECT COUNT(*) from simul_pret sp,client c"
+ String query = "SELECT COUNT(*) from simul_pret sp,client c "
 +"WHERE "
-+"YEAR(dateSimulation) = 2016 "
++"YEAR(dateSimulation) = 2016 AND MONTH(dateSimulation) = ? "
 +"AND id_agence = 1 "
-+"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance))"
++"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance)) "
 +"BETWEEN ? AND ? "
 +"AND sp.id_type_pret = (SELECT id_type_pret from type_pret where libelle = ?) "
 +"AND sp.id_client = c.id_client";
  
- String query2 = "SELECT COUNT(*) from simul_pret sp,client c"
+ String query2 = "SELECT COUNT(*) from simul_pret sp,client c "
 +"WHERE "
-+"YEAR(dateSimulation) = 2016 "
++"YEAR(dateSimulation) = 2016 AND MONTH(dateSimulation) = ? "
 +"AND id_agence = 1 "
-+"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance))"
++"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance)) "
 +"BETWEEN ? AND ? "
 +"AND sp.id_client = c.id_client";
 
@@ -433,13 +447,14 @@ PreparedStatement st;
  PreparedStatement st;
  if(typeTaux != null ){
      st = connexion.prepareStatement(query);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
-        st.setString(3, typeTaux); }
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
+        st.setString(4, typeTaux); }
  else {
+     System.out.println("cas des deux types de prêts pour nombre simulation");
         st = connexion.prepareStatement(query2);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
  }
 
         
@@ -449,6 +464,7 @@ PreparedStatement st;
          Element esimNumbers = new Element("simNumbers");
           
             for(int i=1;i<=12;i++){
+                st.setInt(1, i);
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
             
@@ -468,14 +484,14 @@ PreparedStatement st;
     }
  
     private Element getAgebyLoan(Element element) throws SQLException {
-          
+         System.out.println("passage dans getAgebyLoan");
   String checkImmo = element.getChild("TypePretImmo").getValue();
   String checkConso = element.getChild("TypePretConso").getValue();
  int tabtranche[] = {18,25,26,40,41,65,66,200};         
 
 String query = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
 "WHERE "+
-"YEAR(dateDebut) = 2016 " +
+"YEAR(dateDebut) = 2016  " +
 "AND Age BETWEEN ? AND ? "+
 "AND libelle = ? "+
 "AND id_agence = 1 ";
@@ -557,7 +573,7 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
     } 
     
    
-     private Element getAvgAmount(Element element) throws SQLException {
+private Element getAvgAmount(Element element) throws SQLException {
     
       
          
@@ -584,36 +600,37 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
           { ageDebut=66;ageFin=200; } 
          
    
-        String query = "SELECT AVG(mt_pret) from vue_indicateur3"+
-"WHERE"+
-"YEAR(dateDebut) = 2016 "+
-"AND Age BETWEEN ? AND ?"+
-"AND libelle = ?"+
-"AND id_agence = 1";
+        String query = "SELECT COALESCE(AVG(mt_pret), 0) from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? "+
+"AND Age BETWEEN ? AND ? "+
+"AND libelle = ? "+
+"AND id_agence = 1 ";
          
- String query2 = "SELECT AVG(mt_pret) from vue_indicateur3"+
-"WHERE"+
-"YEAR(dateDebut) = 2016 "+
-"AND Age BETWEEN ? AND ?"+
-"AND id_agence = 1";       
+ String query2 = "SELECT COALESCE(AVG(mt_pret), 0) from vue_indicateur3 "+
+"WHERE "+
+"YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? "+
+"AND Age BETWEEN ? AND ? "+
+"AND id_agence = 1 ";       
         
   PreparedStatement st;
 
  if(typeTaux != null){
      st = connexion.prepareStatement(query);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
-        st.setString(3, typeTaux); }
+        st.setInt(2,ageDebut);
+        st.setInt(3,ageFin);
+        st.setString(4,typeTaux); }
  else {
         st = connexion.prepareStatement(query2);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
+        st.setInt(2,ageDebut);
+        st.setInt(3,ageFin);
  }      
  
   Element root = new Element("rootElement");
-         Element eavgAmount= new Element("eavgAmount");
+         Element eavgAmount= new Element("avgAmount");
           
             for(int i=1;i<=12;i++){
+                st.setInt(1, i);
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
             
@@ -639,18 +656,22 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
      
      
      private Element getLoanTime(Element element) throws SQLException {
-    
-         String checkImmo = element.getChild("TypePretImmo").getValue();
+
+         
+         System.out.println("erreur get loantime 1");
+   String checkImmo = element.getChild("TypePretImmo").getValue();
+         System.out.println("erreur get loantime 2");
   String checkConso = element.getChild("TypePretConso").getValue();
 
    int ageDebut = 0,ageFin = 0;
       String typeTaux = null;
+      System.out.println(Integer.parseInt(element.getChildText("Tranche")));
       int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
        
       
-     if(element.getChild("TypePretImmo").getValue().equals("1") && !element.getChild("TypePretConso").getValue().equals("1") )
+     if(checkImmo.equals("1") && !checkConso.equals("1") )
           typeTaux = "_Credit_IMMO_";
-       else if(element.getChild("TypePretConso").getValue().equals("1") && !element.getChild("TypePretImmo").getValue().equals("1"))
+       else if(checkConso.equals("1") && !checkImmo.equals("1"))
            typeTaux = "_CREDIT_CONSO_";
   
   if(nbtranche == 0)
@@ -663,36 +684,28 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
           { ageDebut=66;ageFin=200; } 
          
    
-        String query = "SELECT AVG(duree) from vue_indicateur3"+
-"WHERE"+
-"YEAR(dateDebut) = 2016 "+
-"AND Age BETWEEN ? AND ?"+
-"AND libelle = ?"+
-"AND id_agence = 1";
+        String query = "SELECT COALESCE(AVG(duree), 0) from vue_indicateur3 WHERE YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? AND Age BETWEEN ? AND ? AND libelle = ? AND id_agence = 1";
          
- String query2 = "SELECT AVG(duree) from vue_indicateur3"+
-"WHERE"+
-"YEAR(dateDebut) = 2016 "+
-"AND Age BETWEEN ? AND ?"+
-"AND id_agence = 1";       
+ String query2 = "SELECT COALESCE(AVG(duree), 0) from vue_indicateur3 WHERE YEAR(dateDebut) = 2016 AND MONTH(dateDebut) = ? AND Age BETWEEN ? AND ? AND id_agence = 1";       
         
   PreparedStatement st;
 
  if(typeTaux != null){
      st = connexion.prepareStatement(query);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
-        st.setString(3, typeTaux); }
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
+        st.setString(4, typeTaux); }
  else {
         st = connexion.prepareStatement(query2);
-        st.setInt(1, ageDebut);
-        st.setInt(2, ageFin);
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
  }      
  
   Element root = new Element("rootElement");
          Element eloanTime = new Element("loanTime");
           
             for(int i=1;i<=12;i++){
+                st.setInt(1,i);
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
             
@@ -712,5 +725,144 @@ String query2 = "SELECT COUNT(*) as LoanNumbers from vue_indicateur3 "+
  
         
      }
+ 
      
+  private Element getInterestEarned(Element element) throws SQLException {
+
+   String mois = "2016/"+element.getChild("Mois").getValue()+"/30" ;     
+   String checkImmo = element.getChild("TypePretImmo").getValue();
+  String checkConso = element.getChild("TypePretConso").getValue();
+
+   int ageDebut = 0,ageFin = 0;
+      String typeTaux = null;
+      int nbtranche = Integer.parseInt(element.getChildText("Tranche"));
+       
+      
+     if(checkImmo.equals("1") && !checkConso.equals("1") )
+          typeTaux = "_Credit_IMMO_";
+       else if(checkConso.equals("1") && !checkImmo.equals("1"))
+           typeTaux = "_CREDIT_CONSO_";
+  
+  if(nbtranche == 0)
+      {   ageDebut=18;ageFin=25; }
+          else if(nbtranche == 1)    
+          {  ageDebut=26;ageFin=40; }
+          else if(nbtranche == 2)
+          {  ageDebut=41;ageFin=65; }
+          else if(nbtranche == 3)
+          { ageDebut=66;ageFin=200; } 
+         
+   
+        String query = 
+ "SELECT duree,mt_pret,coef_assurance,t_marge,valeur "+
+"FROM pret sp,calcpret cp,taux_directeur td "+
+"WHERE "+
+"sp.id_calcPret = cp.id_calcPret AND cp.id_tauxDirecteur = td.id_tauxDirecteur AND typeTaux = '_fixe_' AND "+
+"sp.id_type_pret = (SELECT id_type_pret from type_pret where libelle = ? ) "+
+"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance)) BETWEEN ? AND ? "+
+"AND ? BETWEEN dateDebut AND  DATE_ADD(dateDebut,INTERVAL duree MONTH)"; 
+        
+       String query2 = 
+ "SELECT duree,mt_pret,coef_assurance,t_marge,valeur "+
+"FROM pret sp,calcpret cp,taux_directeur td "+
+"WHERE "+
+"sp.id_calcPret = cp.id_calcPret AND cp.id_tauxDirecteur = td.id_tauxDirecteur AND typeTaux = '_fixe_' AND "+
+"AND (YEAR(CURRENT_DATE) - YEAR(dateNaissance)) BETWEEN ? AND ? "+
+"AND ? BETWEEN dateDebut AND  DATE_ADD(dateDebut,INTERVAL duree MONTH)";       
+ 
+        
+  PreparedStatement st;
+
+ if(typeTaux != null){
+     st = connexion.prepareStatement(query);
+        st.setInt(2, ageDebut);
+        st.setInt(3, ageFin);
+        st.setString(1, typeTaux);
+        st.setString(4, mois);
+ }
+ else {
+        st = connexion.prepareStatement(query2);
+        st.setInt(1, ageDebut);
+        st.setInt(2, ageFin);
+        st.setString(3, mois);
+ }      
+ 
+  Element root = new Element("rootElement");
+       
+                ResultSet rs = st.executeQuery();
+           while (rs.next()) {
+            Element eInterestEarned = new Element("InterestEarned");
+            ResultSetMetaData columns = rs.getMetaData();
+            for (int j = 1; j <= columns.getColumnCount(); j++) {
+                createChildElement(rs, columns.getColumnName(j), columns.getColumnName(j), eInterestEarned);
+            }
+            root.addContent(eInterestEarned);
+        }
+       
+
+              return root;
+ 
+        
+     }    
+  
+  
+  private Element getCustomerNumber() throws SQLException { 
+     Element eCustomerNumber = null;
+     System.out.println("passage dans getCustomerNumber");
+     String query = " SELECT COUNT(*) as CustomerNumbers FROM Client where id_agence = 1";
+     PreparedStatement st =  connexion.prepareStatement(query) ;
+      Element root = new Element("rootElement");
+                ResultSet rs = st.executeQuery();
+           while (rs.next()) {
+             System.out.println(rs.getString("CustomerNumbers"));   
+            eCustomerNumber = new Element("CustomerNumber");
+            eCustomerNumber.setText(rs.getString("CustomerNumbers"));
+    
+        }
+       root.addContent(eCustomerNumber);
+       return root;
+  
+  }
+  
+  private Element getMoney() throws SQLException {
+      String query = "SELECT COALESCE(AVG(mt_apport_perso), 0) AS avg_apport from info_personnelle ";
+      
+       Element eMoney = null;
+    
+   
+     PreparedStatement st =  connexion.prepareStatement(query) ;
+      Element root = new Element("rootElement");
+                ResultSet rs = st.executeQuery();
+           rs.next();
+             System.out.println("montant apport perso"+rs.getString("avg_apport"));   
+            eMoney = new Element("avg_apport");
+            eMoney.setText(rs.getString("avg_apport"));
+    
+        
+       root.addContent(eMoney);
+       return root;
+      
+  }
+  
+  private Element getAge() throws SQLException {
+      String query = "SELECT COALESCE(AVG(YEAR(CURRENT_DATE) - YEAR(dateNaissance)), 0) AS avg_age from Client where id_agence = 1 ";
+      
+       Element eAge = null;
+    
+   
+     PreparedStatement st =  connexion.prepareStatement(query) ;
+      Element root = new Element("rootElement");
+                ResultSet rs = st.executeQuery();
+           while (rs.next()) {
+             System.out.println(rs.getString("avg_age"));   
+            eAge = new Element("avg_age");
+            eAge.setText(rs.getString("avg_age"));
+    
+        }
+       root.addContent(eAge);
+       return root;
+      
+  }
+  
+  
 }

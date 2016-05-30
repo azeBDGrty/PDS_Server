@@ -110,4 +110,22 @@ public class OutPutData {
     public void sendLoanTime(Element information) {
      sendMessage(sendLoanTime.toString(),information);
     }
+
+    public void sendInterestEarned(Element information) {
+        sendMessage(sendInterestEarned.toString(),information);
+    }
+
+     public void sendCustomerNumber(Element information) {
+        sendMessage(sendCustomerNumber.toString(),information);
+    }
+    
+     public void sendMoney(Element information) {
+        sendMessage(sendMoney.toString(),information);
+    }
+     
+    public void sendAge(Element information) {
+        sendMessage(sendAge.toString(),information);
+    }
+     
+     
 }

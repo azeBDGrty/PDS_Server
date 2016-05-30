@@ -97,7 +97,13 @@ public class InPutData {
                 readElement();
                 break;    
             
+            case "askCustomerNumber":
+                this.lastCommand = askCustomerNumber;
+                readElement();
+                break;
+                
                 case "askAvgAge": 
+                System.out.println("passage dans askAvgAge");
                 this.lastCommand = askAvgAge;
                 readElement();
                 break; 
@@ -116,7 +122,11 @@ public class InPutData {
                 this.lastCommand = askAvgAmount;
                 break;        
             
-            case "askLOanTime":
+            case "askInterestEarned":
+                this.lastCommand = askInterestEarned;
+                break;
+                
+            case "askLoanTime":
                 this.lastCommand = askLoanTime;
                 break;
                 
@@ -131,7 +141,14 @@ public class InPutData {
             case "askAllPays":
                 this.lastCommand = askAllPays;
                 break;
+            
+            case "askAge":
+                this.lastCommand = askAge;
+                break;
                 
+            case "askMoney":
+                this.lastCommand = askMoney;
+                break;
                 
             case "askSimulationClient": 
                 this.lastCommand = askSimulationClient;

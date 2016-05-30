@@ -30,7 +30,11 @@ public enum Send {
     sendLoanTime(""),
     sendAvgAge(""),
     sendTauxInteret ("La valeur du taux d'emprunt"),
-    sendSimulationPretsClient("La liste des simulations de prets.");
+    sendSimulationPretsClient("La liste des simulations de prets."),
+    sendInterestEarned(""),
+    sendAge(""),
+    sendMoney(""),
+    sendCustomerNumber("");
             
     private String abv;
 
